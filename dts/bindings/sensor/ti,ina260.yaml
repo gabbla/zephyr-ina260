@@ -7,3 +7,10 @@ description: |
 compatible: "ti,ina260"
 
 include: [sensor-device.yaml, i2c-device.yaml]
+
+properties:
+  alert-gpios:
+    type: phandle-array
+    description: |
+      GPIO connected to the active-low, open-drain ALERT output. Specify
+      GPIO_ACTIVE_LOW and provide a pull-up resistor (or GPIO_PULL_UP).

@@ -9,6 +9,15 @@ config INA260
 	help
 	  Enable driver for the INA260 Current and Power Monitor.
 
+config INA260_TRIGGER
+	bool "INA260 ALERT pin support"
+	depends on INA260
+	select GPIO
+	help
+	  Enable runtime threshold configuration and sensor triggers using the
+	  ALERT pin. Callbacks execute on the system work queue. Set alert-gpios
+	  in devicetree for each device that uses alerts.
+
 config INA260_FAKE
 	bool "Use FFF to simulate communication with INA260 sensor"
 	default n

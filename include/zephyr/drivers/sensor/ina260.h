@@ -9,11 +9,15 @@
 
 #include <zephyr/drivers/i2c.h>
 #include <zephyr/drivers/sensor.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/kernel.h>
 
 /* Register addresses */
 #define INA260_REG_CURRENT	0x01
 #define INA260_REG_VOLTAGE	0x02
 #define INA260_REG_POWER	0x03
+#define INA260_REG_MASK_ENABLE	0x06
+#define INA260_REG_ALERT_LIMIT	0x07
 
 /* Calc values */
 #define INA260_PER_BIT_MULT 125
@@ -32,12 +36,25 @@ enum sensor_channel_ina260 {
 /* Structs */
 struct ina260_device_config {
 	struct i2c_dt_spec bus;
+#ifdef CONFIG_INA260_TRIGGER
+	struct gpio_dt_spec alert_gpio;
+#endif
 };
 
 struct ina260_data {
 	int16_t vol;
 	int16_t cur;
 	uint16_t pow;
+#ifdef CONFIG_INA260_TRIGGER
+	const struct device *dev;
+	struct gpio_callback alert_cb;
+	struct k_work alert_work;
+	struct k_mutex alert_lock;
+	sensor_trigger_handler_t handler;
+	const struct sensor_trigger *trigger;
+	enum sensor_channel alert_channel;
+	uint16_t alert_mask;
+#endif
 };
 
 #endif /* INA260_H__ */
